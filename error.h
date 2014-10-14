@@ -1,4 +1,6 @@
 #define FILE_NOT_FOUND 99
+#define VM_ERROR 100
+#define SCANNER_ERROR 101
 
 void throwError(int code)
 {
@@ -108,6 +110,15 @@ void throwError(int code)
 
 		case FILE_NOT_FOUND:
 			printf("Input file not found\n");
+			break;
+
+		case SCANNER_ERROR:
+			printf("Scanner error\n");
+			break;
+
+		case VM_ERROR:
+			printf("Scanner error\n");
+			break;
 	}
 
 	exit(-1);

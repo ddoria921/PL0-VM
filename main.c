@@ -5,33 +5,97 @@
 #include "parser_functions.h"
 #include "error.h"
 
-int main(int argc, char const *argv[])
+#define SCANNER_OUTPUT 0
+#define PARSER_OUTPUT 1
+#define VM_OUTPUT 2
+#define TRUE 1
+
+static const char scanCommand[] = "./scanner > lexemetable.txt";
+static const char vmCommand[] = "./vm";
+
+int runSanner()
 {
-	/* testing arguments */
-	// printf("%d\n", argc);
-	// printf("%s\n", argv[1]);
+	int status = -1;
+	status = system(scanCommand);
 
-	// get input from file
-	FILE *inputFile = fopen("input.txt", "r");
+	if (status != 0)
+		throwError(SCANNER_ERROR);
 
-	if(!inputFile) 
-		throwError(FILE_NOT_FOUND);
+	return status;
+}
 
-	printf("Found input file.\n");
-	
-	// pass input to scanner
+int runParser()
+{
+	// TODO : fill in code
+	return 0;
+}
 
-	// get output from scanner and pass it to the parser
+int runVirtualMachine()
+{
+	int status = -1;
+	status = system(vmCommand);
+
+	if (status != 0)
+		throwError(VM_ERROR);
+
+	return status;
+}
+
+void printOutputFromFile(char *filename)
+{
+	int c;
+	FILE *file;
+	file = fopen(filename, "r");
+	if (file)
+	{
+	    while ((c = getc(file)) != EOF)
+	        putchar(c);
+	    
+	    fclose(file);
+	    putchar('\n');
+	}
+}
+
+void printOutput(int *flags)
+{
+	if (flags[SCANNER_OUTPUT])
+	{
+		printf("\nScanner output\n================\n");
+		printOutputFromFile("lexemelist.txt");
+	}
+
+	if (flags[PARSER_OUTPUT])
+	{
+		printf("\nParser output\n================\n");
+		printOutputFromFile("mcode.txt");
+	}
+		
+	if (flags[VM_OUTPUT])
+	{
+		printf("\nVirtual machine output\n=========================\n");
+		printOutputFromFile("stacktrace.txt");
+	}
+}
+
+int main(int argc, const char *argv[])
+{
+	// run scanner
+	// input	=> input.txt
+	// output 	=> lexemelist.txt
+	runSanner();
+
+	// run parser using output from scanner
+	// input 	=> lexemelist.txt
+	// output 	=> mcode.txt
+	runParser();
 
 	// get ouput from the parser and pass it to the vm
-
-
-
+	// input 	=> mcode.txt
+	// ouput 	=> stacktrace.txt
+	runVirtualMachine();
 
 	// flags to know what to print
-	int shouldPrintLexemeTokens = 0;
-	int shouldPrintAssemblyCode = 0;
-	int shouldPrintVmOutput = 0;
+	int flags[3] = { 0, 0, 0 };
 
 	// -l --> print the list of lexemes/tokens (scanner output) to the screen
 	// -a --> print the generated assembly code (parser/codegen output) to the screen
@@ -39,25 +103,18 @@ int main(int argc, char const *argv[])
 	int i;
 	for (i = 1; i < argc; i++) 
 	{
-		if (strcmp(argv[i], "-l"))
-			shouldPrintLexemeTokens = 1;
+		if (strcmp(argv[i], "-l") == 0)
+			flags[SCANNER_OUTPUT] = TRUE;
 		
-		if (strcmp(argv[i], "-a"))
-			shouldPrintAssemblyCode = 1;
+		if (strcmp(argv[i], "-a") == 0)
+			flags[PARSER_OUTPUT] = TRUE;
 		
-		if (strcmp(argv[i], "-v"))
-			shouldPrintVmOutput = 1;
+		if (strcmp(argv[i], "-v") == 0)
+			flags[VM_OUTPUT] = TRUE;
 	}
 
-
-	/* UNCOMMENT TO PRINT OUTPUT */
-	// if (shouldPrintLexemeTokens)
-	// 	// print lexeme tokens
-	// if (shouldPrintAssemblyCode)
-	// 	// print assembly code
-	// if (shouldPrintVmOutput)
-		// print vm output
-
+	// printf("Contents of flags %d %d %d\n", flags[0], flags[1], flags[2]);
+	printOutput(flags);
 
 	return 0;
 }
