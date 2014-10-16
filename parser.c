@@ -49,6 +49,28 @@ int	expression(char a[MAXSTRINGS][12], int counter);
 int	term(char a[MAXSTRINGS][12], int counter);
 int	factor(char a[MAXSTRINGS][12], int counter);
 int number(char a[MAXSTRINGS][12], int cnt);
+nt relation(char a[MAXSTRINGS][12], int cnt);
+
+
+
+
+int relation(char a[MAXSTRINGS][12], int cnt){
+
+	if(strcmp(a[cnt],"=")==0)
+		return 1;
+	if(strcmp(a[cnt],"<>")==0)
+		return 1;
+	if(strcmp(a[cnt],"<")==0)
+		return 1;
+	if(strcmp(a[cnt],"<=")==0)
+		return 1;
+	if(strcmp(a[cnt],">")==0)
+		return 1;
+	if(strcmp(a[cnt],">=")==0)
+		return 1;
+return 0;
+
+}
 
 int number(char a[MAXSTRINGS][12], int cnt){
 
@@ -96,12 +118,9 @@ int 	program(char a[MAXSTRINGS][12], int counter){
 
 		counter = block(a,counter);
 
-		if(counter == -1)
-			return-1;
-
 		if (!strcmp(a[counter],periodsym)==0){
 			printf("missing period for end of program\n");
-			return -1;
+			exit(-1);
 		}
 		else 
 			printf(" No errors, program is syntactically correct \n");
@@ -120,18 +139,18 @@ int	block(char a[MAXSTRINGS][12], int counter){
 
 				if (strcmp(a[++cnt],identsym)!=0)
 				{	
-					printf("error identsym \n");
-					return-1;
+					printf("error identsym \n");	//missing identifier symbol 
+					exit(-1);
 
 				}
 				if (strcmp(a[++cnt],eqlsym)!=0)
 				{
-					printf("error eqsym\n");
-					return-1;
+					printf("error eqsym\n");		// missing equal symbol
+					exit(-1);
 				}
 				if (number(a,++cnt)){
-					printf("error number\n");
-					return-1;
+					printf("error number\n");		// missing  number for constant 
+					exit(-1);
 				
 				}	
 			}
@@ -139,8 +158,8 @@ int	block(char a[MAXSTRINGS][12], int counter){
 
 			if (strcmp(a[++cnt],semicolomsym)!=0)
 			{
-					printf("error semicolom\n");
-					return-1;
+					printf("error semicolom\n");	// missing semicolon 
+					exit(-1);
 			}
 		}
 
@@ -150,16 +169,16 @@ int	block(char a[MAXSTRINGS][12], int counter){
 			{
 				if (strcmp(a[++cnt],identsym)!=0)
 				{
-					printf("error identsym \n");
-					return-1;
+					printf("error identsym \n");	// missing identifier 
+					exit(-1);
 				}
 			} 
 			while (strcmp(a[++cnt],commasym)==0);
 
 			if (strcmp(a[++cnt],semicolomsym)!=0)
 			{
-				printf("error semicolom \n");
-				return-1;
+				printf("error semicolom \n");		//  missing semicolon 
+				exit(-1);
 
 			}
 		}
@@ -167,14 +186,14 @@ int	block(char a[MAXSTRINGS][12], int counter){
 
 			if (strcmp(a[++cnt],identsym)!=0)
 				{
-					printf("error identsym \n");
-					return-1;
+					printf("error identsym \n");	// missing identifier
+					exit(-1);
 				}
 
 			if (strcmp(a[++cnt],semicolomsym)!=0)
 			{
-					printf("error semicolom\n");
-					return-1;
+					printf("error semicolom\n"); 	// missing semicolon
+					exit(-1);	
 			}
 
 
@@ -182,14 +201,14 @@ int	block(char a[MAXSTRINGS][12], int counter){
 
 			if (strcmp(a[++cnt],semicolomsym)!=0)
 			{
-					printf("error semicolom\n");
-					return-1;
+					printf("error semicolom\n");			// missing semicolon
+					exit(-1);
 			}
 
 		}
 
-		if(statement(a,cnt+1) == -1)
-			return-1;
+		cnt = statement(a,cnt+1);
+			
 		return 0;
 
 
@@ -206,71 +225,55 @@ int	statement(char a[MAXSTRINGS][12], int counter){
 	{
 		if (strcmp(a[++cnt],becomessym)!=0){
 			
-			printf("error becomessym\n");
-			return-1;
+			printf("error becomessym\n");			// missing the becomes symbol :=
+			exit(-1);
 		}
 		cnt = expression(a,cnt+1);
-		if(cnt == -1 )
-			return cnt;
 	}
 	else if (strcmp(a[cnt],callsym)==0)
 	{
 		if (strcmp(a[++cnt],identsym)!=0)
 		{
-			printf("error identsym \n");
-			return-1;
+			printf("error identsym \n");		// missing identifier
+			exit(-1);
 		}
 	}
 	else if (strcmp(a[++cnt],beginsym)==0)
 	{
 		cnt = statement(a,cnt +1);
-		if (cnt == -1 )
-		{
-			return -1;
-		}
-
+		
 		while(strcmp(a[cnt],semicolomsym)==0)
 		{
 			cnt =statement(a,cnt + 1);
-			if(cnt == -1)
-				return -1; 
 		}
 		if (strcmp(a[cnt],endsym)!=0)
 		{
-			printf("error endsym\n");
+			printf("error endsym\n");		// missing endsym
+			exit(-1);
 		}
 	}
 	else if (strcmp(a[++cnt],ifsym)==0)
 	{
 		cnt = condition(a,cnt +1);
 
-		if (cnt == -1)
-			return -1;
-
 		if (strcmp(a[cnt],thensym)!=0)
 		{
 			cnt = statement(a,cnt +1);
-		
-			if (cnt == -1)
-				return -1;
 		}
 	}
 	else if (strcmp(a[cnt],whilesym)==0)
 	{
 		cnt = condition(a,cnt +1);
 		
-		if (cnt == -1)
-			return -1;	
+		
 
 		if (strcmp(a[cnt],dosym)!=0)
 		{
-			printf("error dosym \n");
-			return-1;
+			printf("error dosym \n");		// missing do symbol
+			exit(-1);
 		}
 		cnt = statement(a,cnt + 1);
 		
-			if (cnt == -1)
-				return -1;
 	}
 
 	return	++cnt;
@@ -284,28 +287,22 @@ int	condition(char a[MAXSTRINGS][12], int counter){
 	{
 		cnt = expression(a, cnt + 1);
 
-			if (cnt == -1)
-				return -1;
-
+		
 	}
 	else
 	{
 		cnt = expression(a, cnt + 1);
 
-		if (cnt == -1)
-			return -1;
-
-		if(strcmp(a[cnt],relation)!=0)
+		
+		if(relation(a,cnt)!=0)
 		{
-			printf("error relation \n");
-			return -1;
+			printf("error relation \n");			// print that its missing < or <= or > or  >= or = or <> 
+			exit(-1);
 		}
 
 		cnt = expression(a, cnt + 1);
 
-		if (cnt == -1)
-			return -1;
-
+	
 	}
 
 	return	++cnt;
@@ -321,18 +318,14 @@ int	expression(char a[MAXSTRINGS][12], int counter){
 	}
 	cnt = term(a,cnt);
 
-		if (cnt == -1)
-			return -1;
-
+		
 
 
 	while(strcmp(a[cnt],plussym)==0 ||strcmp(a[cnt],minussym)==0){
 
 		cnt = term(a,cnt + 1);
 
-		if (cnt == -1)
-			return -1;
-	}
+			}
 
 	return	++cnt;
 }
@@ -343,16 +336,14 @@ int	term(char a[MAXSTRINGS][12], int counter){
 
 	cnt = factor(a,cnt);
 
-	if(cnt == 1 )
-		return -1;
+	
 
 
 	while(strcmp(a[cnt],multsym)==0 ||strcmp(a[cnt],slashsym)==0)
 	{
 		cnt = factor(a,cnt +1);
 
-		if(cnt == -1)
-			return-1;
+		
 
 	}
 
@@ -379,12 +370,11 @@ int	factor(char a[MAXSTRINGS][12], int counter){
 	{
 		cnt = expression(a,cnt +1);
 
-		if(cnt == -1)
-			return -1; 
+		
 		if(strcmp(a[cnt],cp)!=0)
 		{
-			printf("error missing "")"" \n");  // missigf closing parenthesis 
-			return -1;
+			printf("error missing "")"" \n");  // missig closing parenthesis 
+			exit(-1);
 		}
 
 
@@ -392,7 +382,7 @@ int	factor(char a[MAXSTRINGS][12], int counter){
 	else
 	{
 		printf("error missing "")"" \n");   /// arithmetic syntax is incorrect.
-			return -1;
+			exit(-1);
 	}
 		
 
@@ -408,7 +398,7 @@ int main(int argc, char const *argv[])
 
 	else
 
-		return-1; 
+		exit(-1); 
 }
 
 
