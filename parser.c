@@ -5,7 +5,7 @@
 
 
 #define MAXSTRINGS 1000
-char * nulsym 		= 	"1"; 
+char *  nulsym 		= 	"1"; 
 char *	identsym 	= 	"2"; 
 char *	numbersym 	= 	"3"; 
 char *	plussym 	=	"4";
@@ -49,7 +49,7 @@ int	expression(char a[MAXSTRINGS][12], int counter);
 int	term(char a[MAXSTRINGS][12], int counter);
 int	factor(char a[MAXSTRINGS][12], int counter);
 int number(char a[MAXSTRINGS][12], int cnt);
-nt relation(char a[MAXSTRINGS][12], int cnt);
+int relation(char a[MAXSTRINGS][12], int cnt);
 
 
 
@@ -84,7 +84,7 @@ int number(char a[MAXSTRINGS][12], int cnt){
 }
 
 
-int 	tokens_to_array(){
+int tokens_to_array() {
 	char a[MAXSTRINGS][12];
 	int i=0;
 
@@ -94,17 +94,18 @@ int 	tokens_to_array(){
 	while(!feof(list)){
 
 		char input[12];
-		if(fscanf(list, "%s", input)==1){
 
-			printf("%s\n",input );
+		if(fscanf(list, "%s", input)==1) {
+
+			// printf("%s\n",input );
 			strcpy(a[i],input);
 			i++;
-	 }
-	 	}
-printf("done\n\n\n\n");
-int k =i;
+		}
+	}
+	printf("Done scanning input\n\n\n\n");
+	int k =i;
 
-for (int i = 0; i < k; ++i)
+	for (int i = 0; i < k; ++i)
 	{
 		printf("%s \n", a[i] );
 	}
@@ -118,7 +119,8 @@ int 	program(char a[MAXSTRINGS][12], int counter){
 
 		counter = block(a,counter);
 
-		if (!strcmp(a[counter],periodsym)==0){
+		printf("Comparing %s for period at index %d\n", a[counter], counter);
+		if (strcmp(a[counter],periodsym)!=0){
 			printf("missing period for end of program\n");
 			exit(-1);
 		}
@@ -209,12 +211,7 @@ int	block(char a[MAXSTRINGS][12], int counter){
 
 		cnt = statement(a,cnt+1);
 			
-		return 0;
-
-
-		
-
-	
+		return cnt;
 }
 
 int	statement(char a[MAXSTRINGS][12], int counter){

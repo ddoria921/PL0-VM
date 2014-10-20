@@ -11,6 +11,7 @@
 #define TRUE 1
 
 static const char scanCommand[] = "./scanner > lexemetable.txt";
+static const char parserCommand[] = "./parser";
 static const char vmCommand[] = "./vm";
 
 int runSanner()
@@ -18,8 +19,8 @@ int runSanner()
 	int status = -1;
 	status = system(scanCommand);
 
-	if (status != 0)
-		throwError(SCANNER_ERROR);
+	// if (status != 0)
+	// 	throwError(SCANNER_ERROR);
 
 	return status;
 }
@@ -27,7 +28,13 @@ int runSanner()
 int runParser()
 {
 	// TODO : fill in code
-	return 0;
+	int status = -1;
+	status = system(parserCommand);
+
+	// if (status != 0)
+	// 	throwError(SCANNER_ERROR);
+
+	return status;
 }
 
 int runVirtualMachine()
@@ -35,8 +42,8 @@ int runVirtualMachine()
 	int status = -1;
 	status = system(vmCommand);
 
-	if (status != 0)
-		throwError(VM_ERROR);
+	// if (status != 0)
+	// 	throwError(VM_ERROR);
 
 	return status;
 }
@@ -82,17 +89,30 @@ int main(int argc, const char *argv[])
 	// run scanner
 	// input	=> input.txt
 	// output 	=> lexemelist.txt
-	runSanner();
+	if (runSanner() != 0)
+	{
+		printf("SCANNER ERROR\n");
+		exit(-1);
+	}
+		
 
 	// run parser using output from scanner
 	// input 	=> lexemelist.txt
 	// output 	=> mcode.txt
-	runParser();
+	if (runParser() != 0)
+	{
+		printf("PARSER ERROR\n");
+		exit(-1);
+	}
 
 	// get ouput from the parser and pass it to the vm
 	// input 	=> mcode.txt
 	// ouput 	=> stacktrace.txt
-	runVirtualMachine();
+	if (runVirtualMachine() != 0)
+	{
+		printf("VM ERROR\n");
+		exit(-1);
+	}
 
 	// flags to know what to print
 	int flags[3] = { 0, 0, 0 };

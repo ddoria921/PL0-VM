@@ -1,3 +1,5 @@
+int factor(FILE * fin);
+
 // int program() {
 	
 // }
