@@ -1,3 +1,7 @@
+// Darin Doria and Jorge Berroa
+// COP 3402 - Fall 2014
+// HW3 - PL/0 Parser
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -81,9 +85,9 @@ int scanFile(FILE *inputFile, FILE *lexemelist)
 
 			if (current == '/')
 			{
-				printf("Found s slash, checking for comment...\n");
+				printf("Found a slash, checking for comment...\n");
 				current = fgetc(inputFile);
-
+				printf("Current is now %d\n", current);
 				if (current == '*')
 				{
 					printf("Found comment, skipping comment\n");
@@ -91,7 +95,12 @@ int scanFile(FILE *inputFile, FILE *lexemelist)
 					continue;
 				}
 				else
-					ungetc(current, inputFile);
+				{
+					ungetc(comment, inputFile);
+					printf("After ungetting, current is now %d\n", current);
+					continue;
+				}
+
 			}
 
 

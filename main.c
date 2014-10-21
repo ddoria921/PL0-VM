@@ -1,8 +1,10 @@
+// Darin Doria and Jorge Berroa
+// COP 3402 - Fall 2014
+// HW3 - PL/0 Parser
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "symbol.h"
-#include "parser_functions.h"
 #include "error.h"
 
 #define SCANNER_OUTPUT 0
@@ -19,20 +21,13 @@ int runSanner()
 	int status = -1;
 	status = system(scanCommand);
 
-	// if (status != 0)
-	// 	throwError(SCANNER_ERROR);
-
 	return status;
 }
 
 int runParser()
 {
-	// TODO : fill in code
 	int status = -1;
 	status = system(parserCommand);
-
-	// if (status != 0)
-	// 	throwError(SCANNER_ERROR);
 
 	return status;
 }
@@ -41,9 +36,6 @@ int runVirtualMachine()
 {
 	int status = -1;
 	status = system(vmCommand);
-
-	// if (status != 0)
-	// 	throwError(VM_ERROR);
 
 	return status;
 }

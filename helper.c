@@ -1,10 +1,73 @@
+// Darin Doria and Jorge Berroa
+// COP 3402 - Fall 2014
+// HW3 - PL/0 Parser
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "error.h"
 
 // global array of reserved words
 const char *RESERVED[] = {"begin", "end", "if", "then", "while", "do", "call", "const", "var", "procedure", "write", "read", "else"};
+
+// Reads in identifier name from input
+char * getNextIdentifier(FILE * fin)
+{
+	char * ident = malloc(sizeof(char) * 11);
+	char c;
+	int i = 0;
+
+	c = getc(fin);
+
+	// Read in ident until a space is reached
+	while(c != ' ')
+	{
+		// if idefntifier is too long, exit
+		if(i > 10)
+		{
+			free(ident);
+			throwError(26);
+			return NULL;
+		}
+		ident[i++] = c;
+		c = getc(fin);
+	}
+	// Null terminate string
+	ident[i] = '\0';
+
+	return ident;
+}
+
+// Read in number string from input and convert to int
+int getNumber(FILE * fin)
+{
+	char * value = malloc(sizeof(char) * 7);
+	char c;
+	int i = 0, val = 0;
+
+	c = getc(fin);
+	
+	// Read until next space
+	while(c != ' ')
+	{
+		// If number is too many digits, exit
+		if(i > 6)
+		{
+			free(value);
+			throwError(25);
+			return -1;
+		}
+		value[i++] = c;
+		c = getc(fin);
+	}
+	value[i] = '\0';
+	// Convert str to int
+	val = strtol(value, NULL, 10);
+
+	return val;
+}
+
 
 int checkForReservedWord(char *word, FILE *lexemelist)
 {
@@ -45,6 +108,7 @@ int checkForReservedWord(char *word, FILE *lexemelist)
 int checkForSymbol(FILE *inputFile, char symbol, FILE *lexemelist)
 {
 	char tmp = ' ';
+	printf("Checking for symbol: %c\n", symbol);
 	switch(symbol)
 		{
 			case '<':
@@ -181,7 +245,4 @@ void skipComment(FILE *inputFile)
 	
 	// end of comment
 }
-
-
-
 

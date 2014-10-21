@@ -1,4 +1,6 @@
-
+// Darin Doria and Jorge Berroa
+// COP 3402 - Fall 2014
+// HW3 - PL/0 Parser
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -366,7 +368,7 @@ int main(int argc, char const *argv[])
 		
 	}
 
-    // printFile(cpu, counter-1, stacktrace);
+    printFile(cpu, counter-1, stacktrace);
     
     fclose(ifp);
 

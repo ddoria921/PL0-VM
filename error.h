@@ -1,10 +1,15 @@
+// Darin Doria and Jorge Berroa
+// COP 3402 - Fall 2014
+// HW3 - PL/0 Parser
+
 #define FILE_NOT_FOUND 99
 #define VM_ERROR 100
+#define PARSER_ERROR 105
 #define SCANNER_ERROR 101
 
 void throwError(int code)
 {
-	printf("Error: ");
+	printf("\nError: ");
 
 	switch (code) 
 	{
@@ -108,17 +113,40 @@ void throwError(int code)
 			printf("This number is too large\n");
 			break;
 
+		case 26:
+			printf("Identifier is too long.\n");
+			break;
+
+		case 27:
+			printf("Begin must be followed by end.\n");
+			break;
+
+		case 28:
+			printf("Read must be followed by valid identifier.\n");
+			break;
+
+		case 29:
+			printf("Write must be followed by valid identifier.\n");
+			break;
+
 		case FILE_NOT_FOUND:
-			printf("Input file not found\n");
+			printf("Input file could not be opened\n");
 			break;
 
 		case SCANNER_ERROR:
 			printf("Scanner error\n");
 			break;
 
-		case VM_ERROR:
-			printf("Scanner error\n");
+		case PARSER_ERROR:
+			printf("Virtual machine error\n");
 			break;
+
+		case VM_ERROR:
+			printf("Virtual machine error\n");
+			break;
+
+		default:
+			printf("Something went wrong\n");
 	}
 
 	exit(-1);

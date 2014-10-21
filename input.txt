@@ -1,9 +1,5 @@
-var x, w;
-begin
-   x:= 4;
-   w:= 0;
-   if w > x then
-	w:= w + 1
-   else
-	w:= x;
+var x, y;
+begin 
+	y := 3;
+	x := y + 56;
 end.
