@@ -10,7 +10,7 @@ typedef enum
     lessym, leqsym, gtrsym, geqsym, lparentsym,
     rparentsym, commasym, semicolonsym, periodsym, becomessym,
     beginsym, endsym, ifsym, thensym, whilesym,
-    dosym, callsym, constsym, intsym, procsym,
+    dosym, callsym, constsym, varsym, procsym,
     writesym, readsym , elsesym
 } token_type;
 

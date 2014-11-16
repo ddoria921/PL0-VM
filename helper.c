@@ -108,7 +108,7 @@ int checkForReservedWord(char *word, FILE *lexemelist)
 int checkForSymbol(FILE *inputFile, char symbol, FILE *lexemelist)
 {
 	char tmp = ' ';
-	printf("Checking for symbol: %c\n", symbol);
+	// printf("Checking for symbol: %c\n", symbol);
 	switch(symbol)
 		{
 			case '<':

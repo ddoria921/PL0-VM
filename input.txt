@@ -1,5 +1,13 @@
-var x, y;
-begin 
-	y := 3;
-	x := y + 56;
+var a, b, c;
+begin
+	a := 3;
+	b := 10;
+	if a <= b then
+		c := a + b;
+	while a < b do
+		begin
+			a := a + 1;
+			c := c + 3;
+		end;
+	c := a;
 end.

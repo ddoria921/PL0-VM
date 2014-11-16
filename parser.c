@@ -82,22 +82,22 @@ int relation()
 	switch(token)
 	{
 		case(eqsym):
-			return 18;
+			return 8;
 
 		case(neqsym):
-			return 19;
+			return 9;
 
 		case(lessym):
-			return 20;
+			return 10;
 
 		case(leqsym):
-			return 21;
+			return 11;
 
 		case(gtrsym):
-			return 22;
+			return 12;
 
 		case(geqsym):
-			return 23;
+			return 13;
 
 		default:
 			return 0;
@@ -257,7 +257,7 @@ int condition(FILE * input)
 		
 		if (expression(input) == -1) return -1;
 
-		emit(relop, 0, 1);
+		emit(2, 0, relop);
 	}
 
 	return 0;
@@ -267,7 +267,7 @@ int statement(FILE * input)
 {
 	int temp = 0, addr = 0, temp2 = 0, temp3 = 0, index = 0;
 	char * name;
-
+	// printf("Statement starting with token %d\n", token);
 	if (token == identsym)
 	{
 		name = getNextIdentifier(input);
@@ -298,6 +298,20 @@ int statement(FILE * input)
 		
 		rp = 0;
 		emit(4, symbol_table[index].level, symbol_table[index].addr);
+	}
+	else if (token == callsym)
+	{
+		nextToken(input);
+		if (token != identsym)
+			throwError(14);
+
+		// get ident name
+		name = getNextIdentifier(input);
+		index = getSymbolFromTable(name);
+
+		// TODO: write the emit code for call
+
+		nextToken(input);
 	}
 	else if (token == beginsym)
 	{
@@ -424,11 +438,19 @@ int statement(FILE * input)
 		nextToken(input);
 	}
 
+	// printf("Statement ended at token %d\n", token);
 	return 0;
 }
 
 int block(FILE * input, int level) 
 {
+	// ================ TODO ================
+	// level ++ At beginning of block
+	// level __ at the end of block
+	// ======================================
+
+	level++;
+
 	int val = 0, addr = 0;
 	char * name;
 	if (token == constsym)
@@ -459,7 +481,7 @@ int block(FILE * input, int level)
 
 			val = getNumber(input);
 
-			insertToSymbolTable(1, name, val, 0, 0);
+			insertToSymbolTable(1, name, val, level, 0);
 			free(name);
 			nextToken(input);
 		} while(token == commasym);
@@ -472,7 +494,7 @@ int block(FILE * input, int level)
 
 		nextToken(input);
 	}
-	if (token == intsym)
+	if (token == varsym)
 	{
 		do
 		{
@@ -484,8 +506,8 @@ int block(FILE * input, int level)
 			}
 			
 			name = getNextIdentifier(input);
-			// printf("ADDR: %d\n", addr);
 			insertToSymbolTable(2, name, 0, level, addr);
+			// printf("Storing var name %s\n", name);
 			addr += 1;
 			free(name);
 			nextToken(input);
@@ -500,10 +522,54 @@ int block(FILE * input, int level)
 		// Increment stack ptr
 		emit(6, 0, addr);
 		nextToken(input);
+	}
+	// ================ TODO ================
+	// Write the code to handle parsing a
+	// procedure call
+	// ======================================
+	while (token == procsym)
+	{
+		// check for identsym
+		nextToken(input);
+		if (token != identsym)
+		{
+			throwError(4);
+			return -1;
+		}
 
+		// get procedure name and store it in
+		// the symbol table
+		name = getNextIdentifier(input);
+		// printf("Storing proc name %s\n", name);
+		insertToSymbolTable(3, name, 0, level, addr);
+		free(name);
+
+		// check next token for semicolon
+		// this indicates end of procedure name
+		nextToken(input);
+		if (token != semicolonsym) 
+			throwError(5);
+
+		// get next token to start checking for block
+		nextToken(input);
+		if (block(input, level) != 0) return -1;
+
+		// check next token to make sure block ends 
+		// with a semicolon
+		// nextToken(input);
+		// printf("Next token is %d, comparing to %d\n", token, semicolonsym);
+		if (token != semicolonsym)
+		{
+			throwError(5);
+		}
+
+		nextToken(input);
 	}
 	
+	// printf("Going into statement with token %d\n", token);
 	if (statement(input) == -1) return -1;
+
+	level--;
 
 	return 0;
 }

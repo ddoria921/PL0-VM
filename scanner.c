@@ -83,6 +83,10 @@ int scanFile(FILE *inputFile, FILE *lexemelist)
 			buffer = malloc(sizeof(char) * (MAX_IDENT_LENGTH + MAX_IDENT_LENGTH_PROT));
 			lineLength = 0;
 
+			// ================ TODO ================
+			// while-do is causing program to crash.
+			// Figure out what is going on.
+			// ======================================
 			if (current == '/')
 			{
 				printf("Found a slash, checking for comment...\n");
@@ -96,13 +100,12 @@ int scanFile(FILE *inputFile, FILE *lexemelist)
 				}
 				else
 				{
-					ungetc(comment, inputFile);
-					printf("After ungetting, current is now %d\n", current);
+					ungetc(current, inputFile);
+					checkForSymbol(inputFile, '/', lexemelist);
 					continue;
 				}
 
 			}
-
 
 			if (checkForSymbol(inputFile, current, lexemelist) == -1)
 			{
@@ -150,7 +153,3 @@ int main(int argc, const char *argv[])
 	
 	return 0;
 }
-
-
-
-
