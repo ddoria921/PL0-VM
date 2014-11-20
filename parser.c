@@ -65,7 +65,7 @@ int getSymbolFromTable(char * name)
 	int i = 0;
 	for(i = sx-1; i >= 0; i--)
 	{
-		printf("%s symbol at i = %d \n", symbol_table[i].name,i);
+		//printf("%s symbol at i = %d \n", symbol_table[i].name,i);
 		if (strcmp(name, symbol_table[i].name) == 0) return i;
 	}
 
@@ -200,7 +200,7 @@ int factor(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
-		printf("%s name were looking for is \n", name );
+		//printf("%s name were looking for is \n", name );
 
 		if (index == -1)
 		{
@@ -292,7 +292,7 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
-		printf("%s name were looking for is \n", name );
+		//printf("%s name were looking for is \n", name );
 
 
 		if (index == -1)
@@ -331,7 +331,7 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
-		printf("%s name were looking for is \n", name );
+		//printf("%s name were looking for is \n", name );
 
 		if (index == -1)
 		{
@@ -435,7 +435,7 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
-		printf("%s name were looking for is \n", name );
+		//printf("%s name were looking for is \n", name );
 
 
 		if (index == -1)
@@ -466,7 +466,7 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
-		printf("%s name were looking for is \n", name );
+		//printf("%s name were looking for is \n", name );
 
 		if(index == -1)
 		{
@@ -558,7 +558,7 @@ int block(FILE * input, int l)
 			}
 			
 			name = getNextIdentifier(input);
-			printf("inserting %s\n",name );
+			//printf("inserting %s\n",name );
 			insertToSymbolTable(2, name, 0, level, addr);
 			//printf("Storing var name %s\n", name);
 			addr += 1;
