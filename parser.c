@@ -393,6 +393,7 @@ int statement(FILE * input)
 
 		if (statement(input) == -1) return -1;
 
+
 		mcode[temp].M = next_code;
 
 		if (token == elsesym)
