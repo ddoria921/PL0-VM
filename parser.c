@@ -18,7 +18,7 @@ symbol 	symbol_table[MAX_SYMBOL_TABLE_SIZE];
 instruction mcode[MAX_CODE_LENGTH];
 
 // Global variables
-int next_symbol = 0, next_code = 0, token = 0, rp = 0, token_counter = 0;
+int sx=0,next_symbol = 0, next_code = 0, token = 0, rp = 0, token_counter = 0, level= -1,m_index=0;
 
 // get next token from input file and store it in the global variable
 void nextToken(FILE * fin) {
@@ -49,24 +49,35 @@ void nextToken(FILE * fin) {
 // insert to symbol table
 void insertToSymbolTable(int type, char * name, int value, int level, int addr)
 {
+	//printf("level at symbol_table = %d\n",level );
 	symbol_table[next_symbol].kind  = type;
 	strcpy(symbol_table[next_symbol].name, name);
 	symbol_table[next_symbol].val   = value;
 	symbol_table[next_symbol].level = level;
 	symbol_table[next_symbol].addr  = addr;
 	next_symbol++;
+	sx++;
 }
 
 // get symbol from table
 int getSymbolFromTable(char * name)
 {
 	int i = 0;
-	for(i = 0; i < next_symbol; i++)
+	for(i = sx-1; i >= 0; i--)
 	{
 		if (strcmp(name, symbol_table[i].name) == 0) return i;
 	}
 
 	return -1;
+}
+void change_emit(int OP, int L, int M, int index){
+
+	printf("changing %d %d %d to %d %d %d at index %d\n ",mcode[index].OP ,mcode[index].L , mcode[index].M , OP, L, M,index );
+
+	mcode[index].OP = OP;
+	mcode[index].L  = L;
+	mcode[index].M  = M;
+
 }
 
 void emit(int OP, int L, int M)
@@ -74,6 +85,7 @@ void emit(int OP, int L, int M)
 	mcode[next_code].OP = OP;
 	mcode[next_code].L  = L;
 	mcode[next_code].M  = M;
+	//printf("next code is %d emiting %d %d %d\n",next_code,OP,L,M );
 	next_code++;
 }
 
@@ -191,8 +203,11 @@ int factor(FILE * input)
 			throwError(11);
 			return -1;
 		}
-		if (symbol_table[index].kind == 2)
-			emit(3, symbol_table[index].level, symbol_table[index].addr);
+		if (symbol_table[index].kind == 2){
+
+			//printf("index for emit is %d\n",index);
+			emit(3, level-symbol_table[index].level, symbol_table[index].addr);
+		}
 		else
 			emit(1, 0, symbol_table[index].val);
 
@@ -297,7 +312,7 @@ int statement(FILE * input)
 		if (expression(input) == -1) return -1;
 		
 		rp = 0;
-		emit(4, symbol_table[index].level, symbol_table[index].addr);
+		emit(4, level-symbol_table[index].level, symbol_table[index].addr);
 	}
 	else if (token == callsym)
 	{
@@ -308,6 +323,19 @@ int statement(FILE * input)
 		// get ident name
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
+		if (index == -1)
+		{
+			throwError(11);
+			return -1;
+		}
+	   if (symbol_table[index].kind == 3)
+	   		emit(5, level- symbol_table[index].level, symbol_table[index].addr);
+		else 
+		{
+			throwError(30);
+			return -1;
+		}
+
 
 		// TODO: write the emit code for call
 
@@ -315,6 +343,9 @@ int statement(FILE * input)
 	}
 	else if (token == beginsym)
 	{
+
+
+				
 		nextToken(input);
 
 		if (statement(input) == -1) return -1;
@@ -333,7 +364,7 @@ int statement(FILE * input)
 			throwError(27);
 			return -1;
 		}
-
+		
 		nextToken(input);
 	}
 	else if (token == ifsym)
@@ -405,7 +436,7 @@ int statement(FILE * input)
 		emit(10, 0, 2);
 
 		// Store variable in stack
-		emit(4, symbol_table[index].level, symbol_table[index].addr);
+		emit(4, level-symbol_table[index].level, symbol_table[index].addr);
 	
 		nextToken(input);	
 	}
@@ -430,7 +461,8 @@ int statement(FILE * input)
 
 
 		// Load variable user wants to write
-		emit(3, symbol_table[index].level, symbol_table[index].addr);
+		//printf("index for emit is %d\n",index);
+		emit(3, level-symbol_table[index].level, symbol_table[index].addr);
 		
 		// Write to screen
 		emit(9,0, 1);
@@ -442,17 +474,22 @@ int statement(FILE * input)
 	return 0;
 }
 
-int block(FILE * input, int level) 
+int block(FILE * input, int l) 
 {
 	// ================ TODO ================
 	// level ++ At beginning of block
-	// level __ at the end of block
+	// level -- at the end of block
 	// ======================================
 
+	
 	level++;
-
-	int val = 0, addr = 0;
+	int prev_sx=sx;
+	//printf("level =%d\n",level );
+	int val = 0, addr = 4,  jmp_address;
+	
 	char * name;
+	jmp_address = next_code;
+	emit(7,0,next_code+1);
 	if (token == constsym)
 	{
 		do
@@ -507,10 +544,11 @@ int block(FILE * input, int level)
 			
 			name = getNextIdentifier(input);
 			insertToSymbolTable(2, name, 0, level, addr);
-			// printf("Storing var name %s\n", name);
+			//printf("Storing var name %s\n", name);
 			addr += 1;
 			free(name);
 			nextToken(input);
+			//printf("NEXT input IS  %d\n", token);
 		
 		} while(token == commasym);
 
@@ -519,9 +557,9 @@ int block(FILE * input, int level)
 			throwError(5);
 			return -1;
 		}
-		// Increment stack ptr
-		emit(6, 0, addr);
-		nextToken(input);
+
+				// Increment stack ptr
+				nextToken(input);
 	}
 	// ================ TODO ================
 	// Write the code to handle parsing a
@@ -529,7 +567,10 @@ int block(FILE * input, int level)
 	// ======================================
 	while (token == procsym)
 	{
-		// check for identsym
+				// check for identsym
+
+		int mcode_index = next_code;
+
 		nextToken(input);
 		if (token != identsym)
 		{
@@ -540,8 +581,8 @@ int block(FILE * input, int level)
 		// get procedure name and store it in
 		// the symbol table
 		name = getNextIdentifier(input);
-		// printf("Storing proc name %s\n", name);
-		insertToSymbolTable(3, name, 0, level, addr);
+		//printf("Storing addr name %d\n", addr);
+		insertToSymbolTable(3, name, 0, level, next_code);
 		free(name);
 
 		// check next token for semicolon
@@ -564,13 +605,19 @@ int block(FILE * input, int level)
 		}
 
 		nextToken(input);
+		m_index= mcode_index;
+
+
 	}
-	
+	mcode[jmp_address].M=next_code;
+	emit(6,0,addr);
 	// printf("Going into statement with token %d\n", token);
 	if (statement(input) == -1) return -1;
+	emit(2,0,0);
 
+	sx=prev_sx;
 	level--;
-
+	//printf("level =%d\n",level );
 	return 0;
 }
 
@@ -578,7 +625,7 @@ int program(FILE * input)
 {
 	nextToken(input);
 	
-	if (block(input, 0) != 0) return -1;
+	if (block(input, level) != 0) return -1;
 	
 	if (token != periodsym)
 	{
@@ -586,7 +633,7 @@ int program(FILE * input)
 		return -1;
 	}
 
-	emit(11, 0, 3);
+	
 
 	printf("No errors, program is syntactically correct.\n\n");
 	return 0;
@@ -599,7 +646,7 @@ void printmCode()
 	FILE * output = fopen("mcode.txt", "w");
 	for (i = 0; i < next_code; i++)
 	{
-		fprintf(output, "%d %d %d\n", mcode[i].OP, mcode[i].L, mcode[i].M);
+		fprintf(output, "%d %d %d\n\n", mcode[i].OP, mcode[i].L, mcode[i].M);
 	}
 	fclose(output);
 }

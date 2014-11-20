@@ -129,6 +129,10 @@ void throwError(int code)
 			printf("Write must be followed by valid identifier.\n");
 			break;
 
+		case 30:
+		printf("call must be followed by a procedure identifier\n");
+		break;
+
 		case FILE_NOT_FOUND:
 			printf("Input file could not be opened\n");
 			break;
