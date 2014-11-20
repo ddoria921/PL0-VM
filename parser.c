@@ -353,9 +353,6 @@ int statement(FILE * input)
 	}
 	else if (token == beginsym)
 	{
-
-
-				
 		nextToken(input);
 
 		if (statement(input) == -1) return -1;
@@ -397,6 +394,12 @@ int statement(FILE * input)
 		if (statement(input) == -1) return -1;
 
 		mcode[temp].M = next_code;
+
+		if (token == elsesym)
+		{
+			nextToken(input);
+			if (statement(input) == -1) return -1;
+		}
 	} 
 	else if (token == whilesym)
 	{
