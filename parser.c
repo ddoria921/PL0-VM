@@ -50,21 +50,22 @@ void nextToken(FILE * fin) {
 void insertToSymbolTable(int type, char * name, int value, int level, int addr)
 {
 	//printf("level at symbol_table = %d\n",level );
-	symbol_table[next_symbol].kind  = type;
-	strcpy(symbol_table[next_symbol].name, name);
-	symbol_table[next_symbol].val   = value;
-	symbol_table[next_symbol].level = level;
-	symbol_table[next_symbol].addr  = addr;
+	symbol_table[sx].kind  = type;
+	strcpy(symbol_table[sx].name, name);
+	symbol_table[sx].val   = value;
+	symbol_table[sx].level = level;
+	symbol_table[sx].addr  = addr;
 	next_symbol++;
 	sx++;
 }
 
 // get symbol from table
 int getSymbolFromTable(char * name)
-{
+{ 
 	int i = 0;
 	for(i = sx-1; i >= 0; i--)
 	{
+		printf("%s symbol at i = %d \n", symbol_table[i].name,i);
 		if (strcmp(name, symbol_table[i].name) == 0) return i;
 	}
 
@@ -198,6 +199,9 @@ int factor(FILE * input)
 	{
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
+
+		printf("%s name were looking for is \n", name );
+
 		if (index == -1)
 		{
 			throwError(11);
@@ -288,6 +292,9 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
+		printf("%s name were looking for is \n", name );
+
+
 		if (index == -1)
 		{
 			throwError(11);
@@ -323,6 +330,9 @@ int statement(FILE * input)
 		// get ident name
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
+
+		printf("%s name were looking for is \n", name );
+
 		if (index == -1)
 		{
 			throwError(11);
@@ -425,6 +435,9 @@ int statement(FILE * input)
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
 
+		printf("%s name were looking for is \n", name );
+
+
 		if (index == -1)
 		{
 			throwError(11);
@@ -452,6 +465,8 @@ int statement(FILE * input)
 
 		name = getNextIdentifier(input);
 		index = getSymbolFromTable(name);
+
+		printf("%s name were looking for is \n", name );
 
 		if(index == -1)
 		{
@@ -543,6 +558,7 @@ int block(FILE * input, int l)
 			}
 			
 			name = getNextIdentifier(input);
+			printf("inserting %s\n",name );
 			insertToSymbolTable(2, name, 0, level, addr);
 			//printf("Storing var name %s\n", name);
 			addr += 1;

@@ -1,26 +1,15 @@
-var  x,y,z,v,w;
-procedure a;
-  var x,y,u,v;
-  procedure b;
-    var y,z,v;
-    procedure c;
-      var y,z;
-      begin
-        z:=1;
-        x:=y+z+w;
-      end;
-    begin
-      y:=x+u+w;
-      call c;
-    end;
+var f, n;
+procedure fact;
+  var ans1;
   begin
-    z:=2;
-    u:=z+w;
-    call b;
+    ans1:=n;
+    n:= n-1;
+    if n = 0 then f := 1;
+    if n > 0 then call fact;
+    f:=f*ans1;
   end;
 begin
-  x:=1; y:=2; z:=3; v:=4; w:=5;
-  x:=v+w;
-  write z;
-  call a;
+  n:=3;
+  call fact;
+  write f;
 end.
